@@ -1,3 +1,8 @@
+0.2.0
+-----
+ - Removed dynamic radioactivity feature completely (in order to fix issues with FAR and KopenicusExpansion, feature could be migrated to separate mod).
+ * Hopefully fixed issue #1, thus making mod compatible with FAR and KopenicusExpansion. Need more testing though.
+
 0.1.1
 -----
  * Actually added Emitter partmodule for fusion reactors.

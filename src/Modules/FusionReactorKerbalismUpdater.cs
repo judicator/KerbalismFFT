@@ -7,8 +7,8 @@ using SystemHeat;
 
 namespace KerbalismFFT
 {
-    class FFTFusionReactorKerbalismUpdater : PartModule
-    {
+	class FFTFusionReactorKerbalismUpdater : PartModule
+	{
 		public static string brokerName = "FFTFusionReactor";
 		public static string brokerTitle = Localizer.Format("#LOC_KerbalismFFT_Brokers_FusionReactor");
 
@@ -26,29 +26,11 @@ namespace KerbalismFFT
 		[KSPField(isPersistant = true)]
 		public float MinThrottle = 0.1f;
 
-		[KSPField(isPersistant = true)]
-		public bool ReactorHasStarted = false;
-		[KSPField(isPersistant = true)]
-		public bool EmitterRunning = true;
-		[KSPField(isPersistant = true)]
-		public double EmitterMaxRadiation = 0d;
-		[KSPField(isPersistant = true)]
-		public bool LastReactorState = false;
-		[KSPField(isPersistant = true)]
-		public double ReactorStoppedTimestamp = 0d;
-		[KSPField(isPersistant = true)]
-		public double MinEmissionPercent = 0d;
-		[KSPField(isPersistant = true)]
-		public double EmissionDecayRate = 1d;
-
 		protected static string reactorModuleName = "FusionReactor";
 		protected FusionReactor reactorModule;
 
 		protected bool modesListParsed = false;
 		protected List<FusionReactorMode> modes;
-
-		// Radiation source on part
-		protected Emitter emitter;
 
 		public virtual void Start()
 		{
@@ -58,20 +40,8 @@ namespace KerbalismFFT
 				{
 					reactorModule = FindReactorModule(part, reactorModuleID);
 				}
-				if (Features.Radiation && emitter == null)
-				{
-					emitter = FindEmitterModule(part);
-				}
 				if (FirstLoad)
 				{
-					if (emitter != null)
-					{
-						EmitterMaxRadiation = emitter.radiation;
-						if (EmitterMaxRadiation < 0)
-						{
-							EmitterMaxRadiation = 0d;
-						}
-					}
 					if (reactorModule != null)
 					{
 						MinThrottle = reactorModule.MinimumReactorPower;
@@ -80,17 +50,13 @@ namespace KerbalismFFT
 					}
 					FirstLoad = false;
 				}
-				else
-				{
-					EmitterRunning = true;
-				}
 			}
 		}
 
 		public override void OnLoad(ConfigNode node)
 		{
 			base.OnLoad(node);
-			ParseModesList(part);
+			//ParseModesList(part);
 		}
 
 		// Fetch modes list from fusion reactor ConfigNode
@@ -128,64 +94,6 @@ namespace KerbalismFFT
 						ParseModesList(part);
 					}
 					MaxECGeneration = modes[lastReactorModeIndex].powerGeneration;
-				}
-				if (Lib.IsFlight())
-				{
-					if (Features.Radiation && emitter != null)
-					{
-						if (!ReactorHasStarted && !reactorModule.Enabled && EmitterRunning)
-						{
-							// Disable radiation source, because reactor has not started yet
-							emitter.running = false;
-							EmitterRunning = false;
-						}
-						if (!ReactorHasStarted && reactorModule.Enabled)
-						{
-							// Reactor has started - enable radiation source
-							ReactorHasStarted = true;
-							emitter.running = true;
-							emitter.radiation = EmitterMaxRadiation;
-						}
-						if (LastReactorState != reactorModule.Enabled)
-						{
-							LastReactorState = reactorModule.Enabled;
-							if (reactorModule.Enabled)
-							{
-								// Reactor has started again - set radiation source emission to maximum
-								emitter.radiation = EmitterMaxRadiation;
-								ReactorStoppedTimestamp = 0d;
-							}
-							else
-							{
-								// Reactor has stopped - save timestamp, when it happened
-								ReactorStoppedTimestamp = Planetarium.GetUniversalTime();
-							}
-						}
-						if (!reactorModule.Enabled && ReactorHasStarted && ReactorStoppedTimestamp > 0 && MinEmissionPercent < 100)
-						{
-							// Radiation decay
-							double MinRadiation = EmitterMaxRadiation * MinEmissionPercent / 100;
-							if (EmissionDecayRate <= 0)
-							{
-								emitter.radiation = MinRadiation;
-								ReactorStoppedTimestamp = 0d;
-							}
-							else
-							{
-								double secondsPassed = Planetarium.GetUniversalTime() - ReactorStoppedTimestamp;
-								if (secondsPassed > 0)
-								{
-									double NewRadiation = EmitterMaxRadiation * (100 - secondsPassed / EmissionDecayRate) / 100;
-									if (NewRadiation <= MinRadiation)
-									{
-										NewRadiation = MinRadiation;
-										ReactorStoppedTimestamp = 0d;
-									}
-									emitter.radiation = NewRadiation;
-								}
-							}
-						}
-					}
 				}
 			}
 		}
@@ -282,43 +190,6 @@ namespace KerbalismFFT
 							Lib.Proto.Set(reactor, "Charged", false);
 						}
 					}
-					else
-					{
-						// Reactor disabled - radiation decay mechanics
-						if (Features.Radiation &&
-							Lib.Proto.GetBool(module_snapshot, "ReactorHasStarted") &&
-							Lib.Proto.GetDouble(module_snapshot, "ReactorStoppedTimestamp") > 0 &&
-							Lib.Proto.GetDouble(module_snapshot, "MinEmissionPercent") < 100)
-						{
-							ProtoPartModuleSnapshot emitter = KFFTUtils.FindPartModuleSnapshot(part_snapshot, "Emitter");
-							if (emitter != null)
-							{
-								double EmitterMaxRadiation = Lib.Proto.GetDouble(module_snapshot, "EmitterMaxRadiation");
-								double MinEmissionPercent = Lib.Proto.GetDouble(module_snapshot, "MinEmissionPercent");
-								double EmissionDecayRate = Lib.Proto.GetDouble(module_snapshot, "EmissionDecayRate");
-								double MinRadiation = EmitterMaxRadiation * MinEmissionPercent / 100;
-								if (EmissionDecayRate <= 0)
-								{
-									Lib.Proto.Set(emitter, "radiation", MinRadiation);
-									Lib.Proto.Set(module_snapshot, "ReactorStoppedTimestamp", 0d);
-								}
-								else
-								{
-									double secondsPassed = Planetarium.GetUniversalTime() - Lib.Proto.GetDouble(module_snapshot, "ReactorStoppedTimestamp");
-									if (secondsPassed > 0)
-									{
-										double NewRadiation = EmitterMaxRadiation * (100 - secondsPassed / EmissionDecayRate) / 100;
-										if (NewRadiation <= MinRadiation)
-										{
-											NewRadiation = MinRadiation;
-											Lib.Proto.Set(module_snapshot, "ReactorStoppedTimestamp", 0d);
-										}
-										Lib.Proto.Set(emitter, "radiation", NewRadiation);
-									}
-								}
-							}
-						}
-					}
 				}
 				return brokerTitle;
 			}
@@ -340,17 +211,6 @@ namespace KerbalismFFT
 				KFFTUtils.LogError($"[{part}] No FusionReactor was found.");
 			}
 			return reactor;
-		}
-
-		// Find Emitter module on part (Kerbalism radiation source)
-		public Emitter FindEmitterModule(Part part)
-		{
-			Emitter emitter = part.GetComponents<Emitter>().ToList().First();
-			if (emitter == null)
-			{
-				KFFTUtils.LogWarning($"[{part}] No radiation Emitter was found.");
-			}
-			return emitter;
 		}
 	}
 }

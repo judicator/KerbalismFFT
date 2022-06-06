@@ -1,6 +1,6 @@
 # Kerbalism FarFutureTechnologies
 
-"Middleman" mod, which implements experimental Kerbalism resource system support for [Nertea's Far Future Technologies](https://forum.kerbalspaceprogram.com/index.php?/topic/199070-111x-far-future-technologies-april-16/).
+"Middleman" mod, which implements experimental Kerbalism resource system support for [Nertea's Far Future Technologies](https://forum.kerbalspaceprogram.com/index.php?/topic/199070-*/).
 
 
 ## What parts and features of Far Future Technologies mod are supported and how?
@@ -24,28 +24,17 @@ Converted to Kerbalism science experiment. Experiment duration set to 2 Kerbin y
 
 All FFT engines are given more suitable reliability parameters, like unlimited ignitions count, unlimited MTBF and so on.
 
-### Fusion reactors radioactivity
-
-Like reactors from NFElectrical, FFT fusion reactors now emit some radiation.
-However, reactors will start emitting radiation only then they have been started, and after they have been shutdown, emission will slowly decay to some minimum value. Configurable, also see "Mod settings" section below.
-
-### FFT engines radioactivity
-
-All FFT engines are radioactive. Some of them are **extremely** radioactive.
-This mod implements new mechanics for FFT engines: they begin emitting radiation only then started, and emission power is tied to engine throttle. After engine has been shutdown, emission will rapidly decay to some minimum value. Configurable, also see "Mod settings" section below.
-
-
 ## Dependencies
 
-* [KerbalismSystemHeat (0.4.1)](https://github.com/judicator/KerbalismSystemHeat) (bundled as part of download)
+* [KerbalismSystemHeat (0.5.0)](https://github.com/judicator/KerbalismSystemHeat) (bundled as part of download)
 * [Kerbalism (3.14)](https://github.com/Kerbalism/Kerbalism)
-* [FarFutureTechnologies (1.1.4)](https://github.com/post-kerbin-mining-corporation/FarFutureTechnologies)
+* [FarFutureTechnologies (1.2.0)](https://github.com/post-kerbin-mining-corporation/FarFutureTechnologies)
 * [Module manager (last version preferred)](https://github.com/sarbian/ModuleManager)
 
 
 ## Supported KSP versions
 
-KerbalismFFT have been tested in KSP versions from 1.8.1 to 1.11.2.
+KerbalismFFT have been tested in KSP versions from 1.8.1 to 1.12.3.
 
 
 ## Installation
@@ -74,7 +63,7 @@ If you want to install it, just copy `SystemHeatFissionReactorsLowerMinThrust` f
 
 The MIT License (MIT)
 
-Copyright (c) 2021 Alexander Rogov
+Copyright (c) 2022 Alexander Rogov
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 

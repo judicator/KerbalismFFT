@@ -62,7 +62,7 @@ namespace KerbalismFFT
 					double EC = KERBALISM.ResourceCache.Get(v).GetResource(v, "ElectricCharge").Amount;
 					resourceChangeRequest.Add(new KeyValuePair<string, double>("ElectricCharge", -ContainmentCost));
 					if (EC < ContainmentCost)
-                    {
+					{
 						Lib.Proto.Set(module_snapshot, "ContainmentEnabled", false);
 						Message.Post(
 							Severity.danger,
@@ -74,7 +74,7 @@ namespace KerbalismFFT
 				}
 			}
 			else
-            {
+			{
 				float DetonationKJPerUnit = (proto_part_module as FFTModuleAntimatterTankKerbalism).DetonationKJPerUnit;
 				float DetonationRate = (proto_part_module as FFTModuleAntimatterTankKerbalism).DetonationRate;
 				string FuelName = (proto_part_module as FFTModuleAntimatterTankKerbalism).FuelName;
@@ -116,7 +116,7 @@ namespace KerbalismFFT
 			{
 				ResourceInfo ec = KERBALISM.ResourceCache.GetResource(vessel, "ElectricCharge");
 				double chargeRequest = ContainmentCost * TimeWarp.fixedDeltaTime;
-//				ec.Consume(chargeRequest, KERBALISM.ResourceBroker.GetOrCreate(brokerName, KERBALISM.ResourceBroker.BrokerCategory.VesselSystem, brokerTitle));
+				// ec.Consume(chargeRequest, KERBALISM.ResourceBroker.GetOrCreate(brokerName, KERBALISM.ResourceBroker.BrokerCategory.VesselSystem, brokerTitle));
 				if (ec.Amount < chargeRequest)
 				{
 					SetPoweredState(false);

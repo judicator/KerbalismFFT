@@ -7,8 +7,8 @@ using SystemHeat;
 
 namespace KerbalismFFT
 {
-    class FFTFusionEngineKerbalismUpdater : PartModule
-    {
+	class FFTFusionEngineKerbalismUpdater : PartModule
+	{
 		public static string brokerName = "FFTFusionEngine";
 		public static string brokerTitle = Localizer.Format("#LOC_KerbalismFFT_Brokers_FusionEngine");
 
@@ -56,7 +56,7 @@ namespace KerbalismFFT
 		public override void OnLoad(ConfigNode node)
 		{
 			base.OnLoad(node);
-			ParseModesList(part);
+			//ParseModesList(part);
 		}
 
 		// Fetch modes list from fusion reactor ConfigNode
@@ -124,7 +124,7 @@ namespace KerbalismFFT
 			if (reactor != null)
 			{
 				if (Lib.Proto.GetBool(reactor, "Enabled"))
-                {
+				{
 					float maxECGeneration = Lib.Proto.GetFloat(module_snapshot, "MaxECGeneration");
 					float minThrottle = Lib.Proto.GetFloat(module_snapshot, "MinThrottle");
 					int modeIndex = Lib.Proto.GetInt(module_snapshot, "lastReactorModeIndex");
